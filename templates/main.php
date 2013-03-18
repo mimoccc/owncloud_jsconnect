@@ -1,4 +1,4 @@
-{{ script('vendor/angular/angular'), 'appframework' }}
+{{ script('vendor/angular/angular', 'appframework') }}
 {{ script('public/app') }}
 {{ style('style') }}
 {{ style('animation') }}
