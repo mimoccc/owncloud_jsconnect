@@ -26,9 +26,8 @@ namespace OCA\AppTemplateAdvanced\Db;
 require_once(__DIR__ . "/../classloader.php");
 
 
-class ItemMapperTest extends \PHPUnit_Framework_TestCase {
+class ItemMapperTest extends \OCA\AppFramework\Utility\MapperTestUtility {
 
-    private $api;
     private $mapper;
     private $row;
 
@@ -49,21 +48,7 @@ class ItemMapperTest extends \PHPUnit_Framework_TestCase {
         $userId = 1;
         $expected = 'SELECT * FROM `*PREFIX*apptemplateadvanced_items` WHERE `user` = ?';
 
-        $cursor = $this->getMock('cursor', array('fetchRow'));
-        $cursor->expects($this->once())
-                ->method('fetchRow')
-                ->will($this->returnValue($this->row));
-
-        $query = $this->getMock('query', array('execute'));
-        $query->expects($this->once())
-                ->method('execute')
-                ->with($this->equalTo(array($userId)))
-                ->will($this->returnValue($cursor));
-
-        $this->api->expects($this->once())
-                ->method('prepareQuery')
-                ->with($this->equalTo($expected))
-                ->will($this->returnValue($query));
+        $this->setMapperResult($expected, array($userId), array($this->row));
 
         $item = $this->mapper->findByUserId($userId);
 

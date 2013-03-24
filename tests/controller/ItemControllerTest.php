@@ -104,7 +104,7 @@ class ItemControllerTest extends ControllerTestUtility {
 					->method('getUserId')
 					->will($this->returnValue('richard'));
 
-		$itemMapperMock = $this->getMock('ItemMapper', array('findByUserId', 'save'));
+		$itemMapperMock = $this->getMock('ItemMapper', array('findByUserId', 'insert'));
 		$itemMapperMock->expects($this->any())
 					->method('findByUserId')
 					->will($this->throwException(new DoesNotExistException('')));

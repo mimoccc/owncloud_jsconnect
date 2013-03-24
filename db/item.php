@@ -22,59 +22,14 @@
 
 namespace OCA\AppTemplateAdvanced\Db;
 
-
-class Item {
-
-	private $id;
-	private $name;
-	private $path;
-	private $user;
-
-	public function __construct($fromRow=null){
-		if($fromRow){
-			$this->fromRow($fromRow);
-		}
-	}
-
-	public function fromRow($row){
-		$this->id = $row['id'];
-		$this->name = $row['name'];
-		$this->path = $row['path'];
-		$this->user = $row['user'];
-	}
+use \OCA\AppFramework\Db\Entity;
 
 
-	public function getId(){
-		return $this->id;
-	}
+class Item extends Entity {
 
-	public function getName(){
-		return $this->name;
-	}
-
-	public function getUser(){
-		return $this->user;
-	}
-
-	public function getPath(){
-		return $this->path;
-	}
-
-
-	public function setId($id){
-		$this->id = $id;
-	}
-
-	public function setName($name){
-		$this->name = $name;
-	}
-
-	public function setUser($user){
-		$this->user = $user;
-	}
-
-	public function setPath($path){
-		$this->path = $path;
-	}
+	public $id;
+	public $name;
+	public $path;
+	public $user;
 
 }

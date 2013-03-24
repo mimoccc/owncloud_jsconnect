@@ -85,7 +85,7 @@ class ItemController extends Controller {
 			$item->setUser($this->api->getUserId());
 			$item->setPath('/home/path');
 			$item->setName('john');
-			$this->itemMapper->save($item);
+			$this->itemMapper->insert($item);
 		}
 
 		$templateName = 'main';

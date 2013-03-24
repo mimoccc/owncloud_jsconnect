@@ -24,20 +24,16 @@ namespace OCA\AppTemplateAdvanced\Db;
 
 use \OCA\AppFramework\Core\API;
 use \OCA\AppFramework\Db\Mapper;
-use \OCA\AppFramework\Db\DoesNotExistException;
 
 
 class ItemMapper extends Mapper {
 
 
-	private $tableName;
-
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*apptemplateadvanced_items';
+		parent::__construct($api, 'apptemplateadvanced_items');
 	}
 
 
@@ -48,8 +44,14 @@ class ItemMapper extends Mapper {
 	 * @return the item
 	 */
 	public function find($id){
-		$row = $this->findQuery($this->tableName, $id);
-		return new Item($row);
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `id` = ?';
+		$params = array($id);
+		
+		$row = $this->findOneQuery($sql, $params);
+		
+		$item = new Item();
+		$item->fromRow($row);
+		return $item;
 	}
 
 
@@ -57,18 +59,18 @@ class ItemMapper extends Mapper {
 	 * Finds an item by user id
 	 * @param string $userId: the id of the user that we want to find
 	 * @throws DoesNotExistException: if the item does not exist
+	 * @throws MultipleObjectsReturnedException if more than one item exist
 	 * @return the item
 	 */
 	public function findByUserId($userId){
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `user` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `user` = ?';
 		$params = array($userId);
 
-		$result = $this->execute($sql, $params)->fetchRow();
-		if($result){
-			return new Item($result);
-		} else {
-			throw new DoesNotExistException('Item with user id ' . $userId . ' does not exist!');
-		}
+		$row = $this->findOneQuery($sql, $params);
+		
+		$item = new Item();
+		$item->fromRow($row);
+		return $item;
 	}
 
 
@@ -77,67 +79,19 @@ class ItemMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->tableName);
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '`';
 
+		$result = $this->execute($sql);
+		
 		$entityList = array();
+
 		while($row = $result->fetchRow()){
-			$entity = new Item($row);
+			$item = new Item();
+			$item->fromRow($row);
 			array_push($entityList, $entity);
 		}
 
 		return $entityList;
-	}
-
-
-	/**
-	 * Saves an item into the database
-	 * @param Item $item: the item to be saved
-	 * @return the item with the filled in id
-	 */
-	public function save($item){
-		$sql = 'INSERT INTO `'. $this->tableName . '`(`name`, `user`, `path`)'.
-				' VALUES(?, ?, ?)';
-
-		$params = array(
-			$item->getName(),
-			$item->getUser(),
-			$item->getPath()
-		);
-
-		$this->execute($sql, $params);
-
-		$item->setId($this->api->getInsertId($this->tableName));
-	}
-
-
-	/**
-	 * Updates an item
-	 * @param Item $item: the item to be updated
-	 */
-	public function update($item){
-		$sql = 'UPDATE `'. $this->tableName . '` SET
-				`name` = ?,
-				`user` = ?,
-				`path` = ?
-				WHERE `id` = ?';
-
-		$params = array(
-			$item->getName(),
-			$item->getUser(),
-			$item->getPath(),
-			$item->getId()
-		);
-
-		$this->execute($sql, $params);
-	}
-
-
-	/**
-	 * Deletes an item
-	 * @param int $id: the id of the item
-	 */
-	public function delete($id){
-		$this->deleteQuery($this->tableName, $id);
 	}
 
 
