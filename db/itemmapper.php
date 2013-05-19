@@ -88,7 +88,7 @@ class ItemMapper extends Mapper {
 		while($row = $result->fetchRow()){
 			$item = new Item();
 			$item->fromRow($row);
-			array_push($entityList, $entity);
+			array_push($entityList, $item);
 		}
 
 		return $entityList;
